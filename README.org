@@ -1,0 +1,5 @@
+* SPRN Calculator
+
+A reverse engineered toy language that is meant to emulate [[https://replit.com/@bathuniversity/sprn-to-emulate][this]] black box
+calculator (some previous coursework from Uni. of Bath). Done for fun, the toy
+language uses a _recursive descent parser_ written from scratch.
