@@ -3,3 +3,31 @@
 A reverse engineered toy language that is meant to emulate [[https://replit.com/@bathuniversity/sprn-to-emulate][this]] black box
 calculator (some previous coursework from Uni. of Bath). Done for fun, the toy
 language uses a _recursive descent parser_ written from scratch.
+
+* What does it do
+
+- numbers get pushed to the stack;
+- operations pops 2 numbers and push the result;
+- ~r~ gives you a pseudo-random number;
+- ~d~ prints the stack;
+- ~=~ prints the top of the stack;
+
+* How to run it?
+
+You can either pipe into the binary or use it as a repl.
+
+** Via NIX
+#+BEGIN_SRC shell
+  # for repl
+  nix run github:cstml/srpn-calculator
+  # for pipe
+  echo " 1 2 + = " |  nix run github:cstml/srpn-calculator
+#+END_SRC
+
+** Building it and running it locally
+#+BEGIN_SRC shell
+  # to run
+  make run
+  # to build
+  make
+#+END_SRC
