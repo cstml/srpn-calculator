@@ -279,10 +279,13 @@ ParseResult UNKNOWN (){
 
 // Stack Management.
 void stackPush(i32 x){
-  if (stackSize == STACK_LIMIT + 1 ) signalStackOverflow();
-  *stackHead = overflowGuard(x);
-  stackHead++;
-  stackSize++;
+  if (stackSize == STACK_LIMIT - 1 ) {
+    signalStackOverflow();
+  } else {
+    *stackHead = overflowGuard(x);
+    stackHead++;
+    stackSize++;
+  }
 }
 
 OpStatus stackPop2(Tuple *result){

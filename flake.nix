@@ -13,7 +13,7 @@
 
         pkgs = import nixpkgs {inherit system overlays;};
 
-        additionalPkgs = with pkgs; [ clang-tools gdb ];
+        additionalPkgs = with pkgs; [ clang-tools gdb valgrind lua ];
 
         buildPkgs = with pkgs; [ gnumake gcc ];
 
