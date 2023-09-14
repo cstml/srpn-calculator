@@ -37,6 +37,10 @@ static i32 randomStack[STACK_LIMIT] =
 
 static i32 randomStackHeadCounter = 0;
 
+bool reads(char c) {
+  return (*cursor == c);
+}
+
 i32 randomStackPop()
 {
   i32 i = randomStack[randomStackHeadCounter];
@@ -82,7 +86,7 @@ int repl()
 {
   if (READ_OK == readInput())
   {
-    if(TERM() && *cursor == '\0')
+    if(TERM() && reads('\0'))
     {
       LOG("Parsing success",);
       return repl();
@@ -112,14 +116,12 @@ ReadResult readInput()
 // Some Parser helpers.
 bool isZero ()
 {
-  return (*cursor == '0');
+  return reads('0');
 }
 
 bool isNonZeroDigit ()
 {
-  return ((*cursor == '1') || (*cursor == '2') || (*cursor == '3')
-          || (*cursor == '4') || (*cursor == '5') || (*cursor == '6')
-          || (*cursor == '7') || (*cursor == '8') || (*cursor == '9'));
+  return (*cursor >= '1' && *cursor <= '9');
 }
 
 bool isDigit ()
@@ -164,36 +166,36 @@ ParseResult TERM ()
 
 bool isMinus ()
 {
-  return *cursor == '-';
+  return reads('-');
 }
 
 ParseResult END ()
 {
-  if (*cursor == '\0') return P_SUCCESS;
+  if (reads('\0')) return P_SUCCESS;
   return P_FAILED;
 }
 
 ParseResult SPACE()
 {
-  if (*cursor == ' ') return P_SUCCESS;
+  if (reads(' ')) return P_SUCCESS;
   return P_FAILED;
 }
 
 ParseResult INSTRUCTION()
 {
-  if (*cursor == 'd')
+  if (reads('d'))
   {
     stackPrint();
     cursor++;
     return P_SUCCESS;
   }
-  if (*cursor == '=')
+  if (reads('='))
   {
     stackPrintLast();
     cursor++;
     return P_SUCCESS;
   }
-  if (*cursor == 'r')
+  if (reads('r'))
   {
     i32 r = randomStackPop();
     stackPush(r);
@@ -283,7 +285,7 @@ ParseResult OCTAL ()
 
 ParseResult OPP()
 {
-  if (*cursor == '+')
+  if (reads('+'))
   {
     cursor++;
     Tuple t;
@@ -296,7 +298,7 @@ ParseResult OPP()
     return P_SUCCESS;
   }
 
-  if (*cursor == '-')
+  if (reads('-'))
   {
     cursor++;
     Tuple t;
@@ -309,7 +311,7 @@ ParseResult OPP()
     return P_SUCCESS;
   }
 
-  if (*cursor == '/')
+  if (reads('/'))
   {
     cursor++;
     Tuple t;
@@ -332,7 +334,7 @@ ParseResult OPP()
     return P_SUCCESS;
   }
 
-  if (*cursor == '*')
+  if (reads('*'))
   {
     cursor++;
     Tuple t;
