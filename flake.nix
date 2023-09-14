@@ -21,7 +21,7 @@
           name = "srpn";
           src = self;
           buildInputs = buildPkgs;
-          shellInputs = additionalPkgs;
+          nativeBuildInputs = buildPkgs ++ additionalPkgs;
           fixupPhase = ''cp -r ./bin $out'';
           installPhase = ''echo "no install"'';
           shellHook = "zsh";

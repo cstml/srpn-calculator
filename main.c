@@ -41,13 +41,13 @@ i32 randomStackPop()
 {
   i32 i = randomStack[randomStackHeadCounter];
   if (randomStackHeadCounter == STACK_LIMIT - 1)
-    {
-      randomStackHeadCounter = 0;
-    }
+  {
+    randomStackHeadCounter = 0;
+  }
   else
-    {
-      randomStackHeadCounter++;
-    }
+  {
+    randomStackHeadCounter++;
+  }
   return i;
 }
 
@@ -81,18 +81,18 @@ int main()
 int repl()
 {
   if (READ_OK == readInput())
+  {
+    if(TERM() && *cursor == '\0')
     {
-      if(TERM() && *cursor == '\0')
-        {
-          LOG("Parsing success",);
-          return repl();
-        }
-      else
-        {
-          LOG("Parsing failed ~ shouldn't happen.",);
-          return repl();
-        }
+      LOG("Parsing success",);
+      return repl();
     }
+    else
+    {
+      LOG("Parsing failed ~ shouldn't happen.",);
+      return repl();
+    }
+  }
   return 0;
 }
 
@@ -102,9 +102,9 @@ ReadResult readInput()
   int r =scanf("%s", inputBuffer);
   // defend against C-d and terminate orderly.
   if (r == EOF)
-    {
-      return READ_NULL;
-    }
+  {
+    return READ_NULL;
+  }
   LOG("%s\n",inputBuffer);
   return READ_OK;
 }
@@ -131,33 +131,33 @@ bool isDigit ()
 ParseResult TERM ()
 {
   if (END())
-    {
-      return P_SUCCESS;
-    }
+  {
+    return P_SUCCESS;
+  }
   if (NUMBER())
-    {
-      return TERM();
-    }
+  {
+    return TERM();
+  }
   if (OCTAL())
-    {
-      return TERM();
-    }
+  {
+    return TERM();
+  }
   if (OPP())
-    {
-      return TERM();
-    }
+  {
+    return TERM();
+  }
   if (SPACE())
-    {
-      return TERM();
-    }
+  {
+    return TERM();
+  }
   if (INSTRUCTION())
-    {
-      return TERM();
-    }
+  {
+    return TERM();
+  }
   if (UNKNOWN())
-    {
-      return TERM();
-    }
+  {
+    return TERM();
+  }
   // shouldn't be reached due to UNKNOWN();
   return P_FAILED;
 }
@@ -182,24 +182,24 @@ ParseResult SPACE()
 ParseResult INSTRUCTION()
 {
   if (*cursor == 'd')
-    {
-      stackPrint();
-      cursor++;
-      return P_SUCCESS;
-    }
+  {
+    stackPrint();
+    cursor++;
+    return P_SUCCESS;
+  }
   if (*cursor == '=')
-    {
-      stackPrintLast();
-      cursor++;
-      return P_SUCCESS;
-    }
+  {
+    stackPrintLast();
+    cursor++;
+    return P_SUCCESS;
+  }
   if (*cursor == 'r')
-    {
-      i32 r = randomStackPop();
-      stackPush(r);
-      cursor++;
-      return P_SUCCESS;
-    }
+  {
+    i32 r = randomStackPop();
+    stackPush(r);
+    cursor++;
+    return P_SUCCESS;
+  }
   return P_FAILED;
 }
 
@@ -207,143 +207,143 @@ i32 slurpNumber ()
 {
   i32 t = 0;
   while(isDigit())
-    {
-      t *= 10;
-      t += *cursor - '0';
-      cursor++;
-    }
+  {
+    t *= 10;
+    t += *cursor - '0';
+    cursor++;
+  }
   return t;
 }
 
 ParseResult NUMBER ()
 {
   if (isNonZeroDigit())   // Positive Number
-    {
-      i32 t = slurpNumber();
-      stackPush(t);
-      return P_SUCCESS;
-    }
+  {
+    i32 t = slurpNumber();
+    stackPush(t);
+    return P_SUCCESS;
+  }
 
   else if (isMinus())   // Negative Numbers;
+  {
+    cursor++;
+    if(isNonZeroDigit())   // Not An Octal.
     {
-      cursor++;
-      if(isNonZeroDigit())   // Not An Octal.
-        {
-          i32 t = slurpNumber();
-          stackPush(t * -1);
-          return P_SUCCESS;
-        }
-      else
-        {
-          cursor--;
-          return P_FAILED;
-        }
+      i32 t = slurpNumber();
+      stackPush(t * -1);
+      return P_SUCCESS;
     }
+    else
+    {
+      cursor--;
+      return P_FAILED;
+    }
+  }
   return P_FAILED;
 }
 
 ParseResult OCTAL ()
 {
   if (isZero())   // Positive Number
+  {
+    cursor++;
+    i32 temporaryAcc = slurpNumber();
+    i32 conversionValue;
+    // As per blackbox, we silently fail the octal conversion and skip pushing
+    // the number.
+    if(OCTAL_OK == octalToInt(temporaryAcc,&conversionValue))
+    {
+      stackPush(conversionValue);
+    }
+    return P_SUCCESS;
+  }
+
+  else if (isMinus())   // Negative Numbers;
+  {
+    cursor++;
+    if(isZero())
     {
       cursor++;
       i32 temporaryAcc = slurpNumber();
       i32 conversionValue;
-      // As per blackbox, we silently fail the octal conversion and skip pushing
-      // the number.
-      if(OCTAL_OK == octalToInt(temporaryAcc,&conversionValue))
-        {
-          stackPush(conversionValue);
-        }
+      if(OCTAL_OK == octalToInt(temporaryAcc, &conversionValue))
+      {
+        stackPush(conversionValue * -1);
+      }
       return P_SUCCESS;
     }
-
-  else if (isMinus())   // Negative Numbers;
+    else
     {
-      cursor++;
-      if(isZero())
-        {
-          cursor++;
-          i32 temporaryAcc = slurpNumber();
-          i32 conversionValue;
-          if(OCTAL_OK == octalToInt(temporaryAcc, &conversionValue))
-            {
-              stackPush(conversionValue * -1);
-            }
-          return P_SUCCESS;
-        }
-      else
-        {
-          cursor--;
-          return P_FAILED;
-        }
+      cursor--;
+      return P_FAILED;
     }
+  }
   return P_FAILED;
 }
 
 ParseResult OPP()
 {
   if (*cursor == '+')
+  {
+    cursor++;
+    Tuple t;
+    if(OP_OK ==  stackPop2(&t))
     {
-      cursor++;
-      Tuple t;
-      if(OP_OK ==  stackPop2(&t))
-        {
-          i32 a = t.fst;
-          i32 b = t.snd;
-          stackPush(a + b);
-        }
-      return P_SUCCESS;
+      i32 a = t.fst;
+      i32 b = t.snd;
+      stackPush(a + b);
     }
+    return P_SUCCESS;
+  }
 
   if (*cursor == '-')
+  {
+    cursor++;
+    Tuple t;
+    if (OP_OK == stackPop2(&t))
     {
-      cursor++;
-      Tuple t;
-      if (OP_OK == stackPop2(&t))
-        {
-          i32 a = t.fst;
-          i32 b = t.snd;
-          stackPush(a - b);
-        }
-      return P_SUCCESS;
+      i32 a = t.fst;
+      i32 b = t.snd;
+      stackPush(a - b);
     }
+    return P_SUCCESS;
+  }
 
   if (*cursor == '/')
+  {
+    cursor++;
+    Tuple t;
+    if(OP_OK == stackPop2(&t))
     {
-      cursor++;
-      Tuple t;
-      if(OP_OK == stackPop2(&t))
-        {
-          i32 a = t.fst;
-          i32 b = t.snd;
-          if (a == 0)
-            {
-              // Signal and push back the numbers;
-              signalDivByZero();
-              stackPush(b);
-              stackPush(a);
-            }
-          else
-            {
-              stackPush(a / b);
-            }
-        }
-      return P_SUCCESS;
+      i32 a = t.fst;
+      i32 b = t.snd;
+      if (a == 0)
+      {
+        // Signal and push back the numbers;
+        signalDivByZero();
+        stackPush(b);
+        stackPush(a);
+      }
+      else
+      {
+        stackPush(a / b);
+      }
     }
+    return P_SUCCESS;
+  }
 
   if (*cursor == '*')
+  {
+    cursor++;
+    Tuple t;
+    if(OP_OK == stackPop2(&t))
     {
-      cursor++;
-      Tuple t;
-      if(OP_OK == stackPop2(&t))
-        {
-          i32 a = t.fst;
-          i32 b = t.snd;
-          stackPush(a * b);
-        }
-      return P_SUCCESS;
+      i32 a = t.fst;
+      i32 b = t.snd;
+      stackPush(a * b);
     }
+    return P_SUCCESS;
+  }
 
   return P_FAILED;
 }
@@ -360,35 +360,35 @@ ParseResult UNKNOWN ()
 void stackPush(i32 x)
 {
   if (stackSize == STACK_LIMIT - 1 )
-    {
-      signalStackOverflow();
-    }
+  {
+    signalStackOverflow();
+  }
   else
-    {
-      *stackHead = overflowGuard(x);
-      stackHead++;
-      stackSize++;
-    }
+  {
+    *stackHead = overflowGuard(x);
+    stackHead++;
+    stackSize++;
+  }
 }
 
 OpStatus stackPop2(Tuple *result)
 {
   if (stackSize <= 1)
-    {
-      signalStackUnderflow();
-      return OP_FAILED;
-    }
+  {
+    signalStackUnderflow();
+    return OP_FAILED;
+  }
   else
-    {
-      --stackHead;
-      i32 t1 = *stackHead;
-      --stackHead;
-      i32 t2 = *stackHead;
-      stackSize-=2;
-      result->fst = t1;
-      result->snd = t2;
-      return OP_OK;
-    }
+  {
+    --stackHead;
+    i32 t1 = *stackHead;
+    --stackHead;
+    i32 t2 = *stackHead;
+    stackSize-=2;
+    result->fst = t1;
+    result->snd = t2;
+    return OP_OK;
+  }
 }
 
 OctalConversion octalToInt (i32 octal, i32 *result)
@@ -397,18 +397,18 @@ OctalConversion octalToInt (i32 octal, i32 *result)
   int base = 8;
   int power = 0;
   while (octal)
+  {
+    int lastDigit = octal % 10;
+
+    if (lastDigit > 7)
     {
-      int lastDigit = octal % 10;
-
-      if (lastDigit > 7)
-        {
-          return OCTAL_FAILED;
-        }
-
-      octal /= 10;
-      decimalValue += lastDigit * pow(base,power);
-      power += 1;
+      return OCTAL_FAILED;
     }
+
+    octal /= 10;
+    decimalValue += lastDigit * pow(base,power);
+    power += 1;
+  }
   *result = decimalValue;
   return OCTAL_OK;
 }
@@ -425,19 +425,19 @@ int overflowGuard (i32 x)
 void stackPrint ()
 {
   for (i32 i = 0 ; i < stackSize ; i++)
-    {
-      printf("%ld\n",stack[i]);
-    }
+  {
+    printf("%ld\n",stack[i]);
+  }
 }
 
 void stackPrintLast ()
 {
   switch (stackSize)
-    {
-    case 0:
-      puts("Stack empty.\n");
-      break;
-    default:
-      printf("%li\n",*(stackHead - 1));
-    }
+  {
+  case 0:
+    puts("Stack empty.\n");
+    break;
+  default:
+    printf("%li\n",*(stackHead - 1));
+  }
 }
