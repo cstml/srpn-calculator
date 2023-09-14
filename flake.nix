@@ -13,9 +13,9 @@
 
         pkgs = import nixpkgs {inherit system overlays;};
 
-        additionalPkgs = with pkgs; [ clang-tools gdb valgrind lua astyle ];
+        additionalPkgs = with pkgs; [ clang-tools gdb valgrind lua astyle zsh ];
 
-        buildPkgs = with pkgs; [ gnumake gcc ];
+        buildPkgs = with pkgs; [ gnumake clang ];
 
         project = pkgs.stdenv.mkDerivation {
           name = "srpn";
@@ -23,6 +23,8 @@
           buildInputs = buildPkgs;
           shellInputs = additionalPkgs;
           fixupPhase = ''cp -r ./bin $out'';
+          installPhase = ''echo "no install"'';
+          shellHook = "zsh";
         };
 
       in {

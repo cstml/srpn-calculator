@@ -3,7 +3,7 @@
 CFILES := $(shell find . | grep *.c)
 
 bin/srpn: main.c bin/
-	gcc -ggdb3 -lm main.c -o ./bin/srpn
+	clang -ggdb3 -lm main.c -o ./bin/srpn
 
 bin/:
 	mkdir bin
