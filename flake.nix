@@ -13,17 +13,17 @@
 
         pkgs = import nixpkgs {inherit system overlays;};
 
-        additionalPkgs = with pkgs; [ clang-tools gdb valgrind lua astyle zsh ];
+        additionalPkgs = with pkgs; [ clang-tools gdb valgrind lua astyle zsh rnix-lsp];
 
-        buildPkgs = with pkgs; [ gnumake clang ];
+        buildInputs = with pkgs; [ gnumake clang ];
 
         project = pkgs.stdenv.mkDerivation {
           name = "srpn";
           src = self;
-          buildInputs = buildPkgs;
-          nativeBuildInputs = buildPkgs ++ additionalPkgs;
+          inherit buildInputs;
+          nativeBuildInputs = buildInputs ++ additionalPkgs;
           fixupPhase = ''cp -r ./bin $out'';
-          installPhase = ''echo "no install"'';
+          installPhase = ''mkdir -p $out/bin'';
           shellHook = "zsh";
         };
 
