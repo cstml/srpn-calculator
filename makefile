@@ -21,8 +21,8 @@ cleanup:
 	rm -r ./bin
 
 test: test.lua tests.lua bin/srpn
-	echo "Running tests!"
+	@echo "Running tests!"
 	@lua test.lua
 
 format:
-	astyle --style=gnu --indent=spaces=2 $(CFILES)
+	astyle --indent=spaces=2 $(CFILES)
