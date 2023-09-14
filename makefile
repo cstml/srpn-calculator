@@ -1,4 +1,6 @@
-.PHONY: run install remove cleanup test
+.PHONY: run install remove cleanup test format
+
+CFILES := $(shell find . | grep *.c)
 
 bin/srpn: main.c bin/
 	gcc -ggdb3 -lm main.c -o ./bin/srpn
@@ -21,3 +23,6 @@ cleanup:
 test: test.lua tests.lua bin/srpn
 	echo "Running tests!"
 	@lua test.lua
+
+format:
+	astyle --style=gnu --indent=spaces=2 $(CFILES)
