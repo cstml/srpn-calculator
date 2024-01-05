@@ -1,6 +1,7 @@
 .PHONY: run install remove cleanup test format
 
 CFILES := $(shell find . | grep *.c)
+HFILES := $(shell find . | grep *.h)
 
 bin/srpn: main.c bin/
 	clang -ggdb3 -lm main.c -o ./bin/srpn
@@ -26,3 +27,4 @@ test: test.lua tests.lua bin/srpn
 
 format:
 	astyle --indent=spaces=2 $(CFILES)
+	astyle --indent=spaces=2 $(HFILES)

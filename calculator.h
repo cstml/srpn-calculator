@@ -80,7 +80,8 @@ static i32 randomStack[STACK_LIMIT] =
 
 static i32 randomStackHeadCounter = 0;
 
-bool reads(char c) {
+bool reads(char c) 
+{
   return (*cursor == c);
 }
 
